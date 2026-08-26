@@ -1,0 +1,106 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 45
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Select Xcode
+      run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+    - name: Show Xcode version
+      run: xcodebuild -version
+
+    - name: Install XcodeGen
+      run: brew install xcodegen
+
+    - name: Generate Xcode project
+      run: |
+        cd ios
+        xcodegen generate
+
+    - name: Resolve package dependencies
+      run: |
+        cd ios
+        xcodebuild -resolvePackageDependencies \
+          -project Voxyz.xcodeproj \
+          -scheme Voxyz \
+          -clonedSourcePackagesDirPath .build/packages
+
+    - name: Build for generic iOS device
+      run: |
+        cd ios
+        xcodebuild build \
+          -project Voxyz.xcodeproj \
+          -scheme Voxyz \
+          -destination "generic/platform=iOS" \
+          -configuration Release \
+          -derivedDataPath ../build/DerivedData \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          ENABLE_BITCODE=NO \
+          AD_HOC_CODE_SIGNING_ALLOWED=YES \
+          COMPILER_INDEX_STORE_ENABLE=NO \
+          | xcpretty
+
+    - name: Create IPA bundle
+      run: |
+        APP_PATH=$(find build/DerivedData/Build/Products/Release-iphoneos -name "*.app" -type d | head -1)
+
+        if [ -z "$APP_PATH" ]; then
+          echo "Error: No .app bundle found"
+          exit 1
+        fi
+
+        echo "Found app at: $APP_PATH"
+
+        mkdir -p build/ipa/Payload
+        cp -R "$APP_PATH" build/ipa/Payload/
+
+        echo "App contents:"
+        ls -la build/ipa/Payload/
+
+    - name: Package IPA
+      run: |
+        cd build/ipa
+        zip -r ../Voxyz-universal.ipa Payload
+        cd ../..
+
+        echo ""
+        echo "IPA created:"
+        ls -lh build/Voxyz-universal.ipa
+
+    - name: Upload IPA artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Voxyz-iOS-${{ github.run_number }}
+        path: build/Voxyz-universal.ipa
+        retention-days: 30
+        if-no-files-found: error
+
+    - name: Summary
+      run: |
+        echo "## Build Complete" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Voxyz iOS (Unsigned IPA)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Build:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Platform:** iOS (arm64)" >> $GITHUB_STEP_SUMMARY
+        echo "**Type:** Unsigned IPA" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Download" >> $GITHUB_STEP_SUMMARY
+        echo "1. Go to [Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+        echo "2. Click on the **build** job" >> $GITHUB_STEP_SUMMARY
+        echo "3. Download **Voxyz-iOS-${{ github.run_number }}** artifact" >> $GITHUB_STEP_SUMMARY

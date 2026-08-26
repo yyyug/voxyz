@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.spec
+
+# Node
+node_modules/
+
+# Windows binaries
+*.exe
+*.dll
+*.zip
+
+# Models (large files)
+app_data/models/
+*.onnx
+*.pt
+*.gguf
+*.bin
+
+# App data
+app_data/recordings/
+app_data/exports/
+app_data/imports/
+app_data/preprocessed/
+app_data/voxyz.db
+
+# Frontend
+frontend-dist/
+
+# Xcode / iOS build artifacts
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+build/
+.build/
+.swiftpm/
+Package.resolved
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Temp
+.tmp/
+tools/ffmpeg*
+tools/vs_BuildTools.exe
