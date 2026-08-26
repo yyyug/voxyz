@@ -1,9 +1,10 @@
 import SwiftUI
 
-enum Tab: String, CaseIterable {
+enum Tab: String, CaseIterable, Identifiable {
     case transcribe
     case history
     case settings
+    var id: String { rawValue }
 }
 
 struct Sidebar: View {
