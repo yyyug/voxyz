@@ -144,7 +144,7 @@ class DatabaseManager {
         guard let dbPool = dbPool else { return }
         try dbPool.write { db in
             var sets: [String] = ["status = ?", "updated_at = ?"]
-            var args: [Any] = [status.rawValue, Date().iso8601String]
+            var args = StatementArguments([status.rawValue, Date().iso8601String])
             if let error = error { sets.append("error = ?"); args.append(error) }
             if let progress = progress { sets.append("progress = ?"); args.append(progress) }
             if let msg = statusMessage { sets.append("status_message = ?"); args.append(msg) }

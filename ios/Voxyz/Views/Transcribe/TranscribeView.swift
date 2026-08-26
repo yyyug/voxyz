@@ -53,7 +53,7 @@ struct TranscribeView: View {
             .disabled(viewModel.livePreviewText.isEmpty)
         }
         .padding()
-        .background(Color(nsColor: .controlBackgroundColor))
+        .background(Color(.secondarySystemBackground))
         .cornerRadius(12)
     }
 

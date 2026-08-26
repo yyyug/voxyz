@@ -74,7 +74,6 @@ class TranscribeViewModel: ObservableObject {
 
     private func handleAudioChunk(data: Data, frameCount: Int) {
         guard isLiveTranscriptionActive else { return }
-        guard senseVoiceEngine != nil else { return }
 
         Task {
             do {

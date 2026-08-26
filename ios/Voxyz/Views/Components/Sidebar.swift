@@ -11,8 +11,10 @@ struct Sidebar: View {
 
     var body: some View {
         NavigationSplitView {
-            List(Tab.allCases, id: \.self, selection: $selectedTab) { tab in
-                Label(tabTitle(tab), systemImage: tabIcon(tab))
+            List(selection: $selectedTab) {
+                ForEach(Tab.allCases) { tab in
+                    Label(tabTitle(tab), systemImage: tabIcon(tab)).tag(tab)
+                }
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
         } detail: {
