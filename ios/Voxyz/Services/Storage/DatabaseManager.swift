@@ -143,14 +143,24 @@ class DatabaseManager {
     func updateJobStatus(id: String, status: JobStatus, error: String? = nil, progress: Double? = nil, statusMessage: String? = nil) throws {
         guard let dbPool = dbPool else { return }
         try dbPool.write { db in
-            var sets: [String] = ["status = ?", "updated_at = ?"]
-            var args: [any DatabaseValueConvertible] = [status.rawValue, Date().iso8601String]
-            if let error = error { sets.append("error = ?"); args.append(error) }
-            if let progress = progress { sets.append("progress = ?"); args.append(progress) }
-            if let msg = statusMessage { sets.append("status_message = ?"); args.append(msg) }
-            if status == .completed { sets.append("completed_at = ?"); args.append(Date().iso8601String) }
-            args.append(id)
-            try db.execute(sql: "UPDATE jobs SET \(sets.joined(separator: ", ")) WHERE id = ?", arguments: StatementArguments(arguments: args))
+            try db.execute(sql: "UPDATE jobs SET status = ?, updated_at = ? WHERE id = ?",
+                           arguments: [status.rawValue, Date().iso8601String, id])
+            if let error = error {
+                try db.execute(sql: "UPDATE jobs SET error = ? WHERE id = ?",
+                               arguments: [error, id])
+            }
+            if let progress = progress {
+                try db.execute(sql: "UPDATE jobs SET progress = ? WHERE id = ?",
+                               arguments: [String(progress), id])
+            }
+            if let msg = statusMessage {
+                try db.execute(sql: "UPDATE jobs SET status_message = ? WHERE id = ?",
+                               arguments: [msg, id])
+            }
+            if status == .completed {
+                try db.execute(sql: "UPDATE jobs SET completed_at = ? WHERE id = ?",
+                               arguments: [Date().iso8601String, id])
+            }
         }
     }
 
