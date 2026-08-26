@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 45
 
     steps:
@@ -17,7 +17,10 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Select Xcode
-      run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+      run: |
+        XCODE_DIR=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)
+        echo "Using: $XCODE_DIR"
+        sudo xcode-select -s "$XCODE_DIR/Contents/Developer"
 
     - name: Show Xcode version
       run: xcodebuild -version
