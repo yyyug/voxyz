@@ -150,7 +150,7 @@ class DatabaseManager {
             if let msg = statusMessage { sets.append("status_message = ?"); args.append(msg) }
             if status == .completed { sets.append("completed_at = ?"); args.append(Date().iso8601String) }
             args.append(id)
-            try db.execute(sql: "UPDATE jobs SET \(sets.joined(separator: ", ")) WHERE id = ?", arguments: StatementArguments(contentsOf: args))
+            try db.execute(sql: "UPDATE jobs SET \(sets.joined(separator: ", ")) WHERE id = ?", arguments: StatementArguments(arguments: args))
         }
     }
 
