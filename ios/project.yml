@@ -6,6 +6,14 @@ options:
   xcodeVersion: "15.4"
   generateEmptyDirectories: true
 
+packages:
+  GRDB.swift:
+    url: https://github.com/groue/GRDB.swift.git
+    from: "7.0.0"
+  llama.cpp:
+    url: https://github.com/ggerganov/llama.cpp.git
+    branch: master
+
 settings:
   base:
     SWIFT_VERSION: "5.9"
