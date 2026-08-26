@@ -11,7 +11,7 @@ enum JobStatus: String, Codable, DatabaseValueConvertible {
     case cancelled
 }
 
-struct Job: Codable, FetchableRecord, PersistableRecord {
+struct Job: Codable, FetchableRecord, PersistableRecord, Identifiable {
     static let databaseTableName = "jobs"
 
     var id: String

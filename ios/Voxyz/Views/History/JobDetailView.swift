@@ -55,7 +55,7 @@ struct JobDetailView: View {
             }
 
             Button(action: {
-                if let name = job.name {
+                if job.name != nil {
                     viewModel.deleteJobs(at: IndexSet(integer: viewModel.jobs.firstIndex(where: { $0.id == job.id }) ?? 0))
                 }
             }) {

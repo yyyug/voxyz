@@ -9,6 +9,7 @@ enum ModelUtils {
             .map { "\(directory)/\($0)" }
     }
 
+    @MainActor
     static func configureAllEngines(appState: AppState) {
         let settings = AppSettings.shared
 

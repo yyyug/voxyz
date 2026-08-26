@@ -1,7 +1,7 @@
 import Foundation
 import GRDB
 
-struct Segment: Codable, FetchableRecord, PersistableRecord {
+struct Segment: Codable, FetchableRecord, PersistableRecord, Identifiable {
     static let databaseTableName = "segments"
 
     var id: String

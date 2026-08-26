@@ -77,9 +77,13 @@ class AudioRecorder: NSObject, ObservableObject {
     }
 
     func resume() {
-        engine.start()
-        state.isPaused = false
-        notifyStateChanged()
+        do {
+            try engine.start()
+            state.isPaused = false
+            notifyStateChanged()
+        } catch {
+            print("Failed to resume recording: \(error)")
+        }
     }
 
     private func configureAudioSession() throws {

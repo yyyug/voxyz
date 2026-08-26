@@ -18,7 +18,8 @@ class DatabaseManager {
     }
 
     private func createTables() throws {
-        try dbPool?.write { db in
+        guard let dbPool = dbPool else { return }
+        try dbPool.write { db in
             try db.execute(sql: """
                 CREATE TABLE IF NOT EXISTS settings (
                     key TEXT PRIMARY KEY,
@@ -63,7 +64,8 @@ class DatabaseManager {
     }
 
     func saveSetting(key: String, value: String) throws {
-        try dbPool?.write { db in
+        guard let dbPool = dbPool else { return }
+        try dbPool.write { db in
             try db.execute(
                 sql: "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
                 arguments: [key, value]
@@ -81,7 +83,8 @@ class DatabaseManager {
 
     func createJob(name: String? = nil) throws -> Job {
         let job = Job(name: name)
-        try dbPool?.write { db in
+        guard let dbPool = dbPool else { return job }
+        try dbPool.write { db in
             try job.insert(db)
         }
         return job
@@ -104,14 +107,16 @@ class DatabaseManager {
     }
 
     func deleteJob(id: String) throws {
-        try dbPool?.write { db in
+        guard let dbPool = dbPool else { return }
+        try dbPool.write { db in
             try db.execute(sql: "DELETE FROM segments WHERE job_id = ?", arguments: [id])
             try db.execute(sql: "DELETE FROM jobs WHERE id = ?", arguments: [id])
         }
     }
 
     func saveJobTranscript(id: String, text: String, segments: [Segment]) throws {
-        try dbPool?.write { db in
+        guard let dbPool = dbPool else { return }
+        try dbPool.write { db in
             try db.execute(
                 sql: "UPDATE jobs SET text = ?, updated_at = ? WHERE id = ?",
                 arguments: [text, Date().iso8601String, id]
@@ -126,7 +131,8 @@ class DatabaseManager {
     }
 
     func saveJobTranslation(id: String, translatedText: String, language: String) throws {
-        try dbPool?.write { db in
+        guard let dbPool = dbPool else { return }
+        try dbPool.write { db in
             try db.execute(
                 sql: "UPDATE jobs SET translated_text = ?, translated_language = ?, updated_at = ? WHERE id = ?",
                 arguments: [translatedText, language, Date().iso8601String, id]
@@ -135,7 +141,8 @@ class DatabaseManager {
     }
 
     func updateJobStatus(id: String, status: JobStatus, error: String? = nil, progress: Double? = nil, statusMessage: String? = nil) throws {
-        try dbPool?.write { db in
+        guard let dbPool = dbPool else { return }
+        try dbPool.write { db in
             var sets: [String] = ["status = ?", "updated_at = ?"]
             var args: [Any] = [status.rawValue, Date().iso8601String]
             if let error = error { sets.append("error = ?"); args.append(error) }
@@ -148,7 +155,8 @@ class DatabaseManager {
     }
 
     func updateJobMetadata(id: String, name: String?, notes: String?) throws {
-        try dbPool?.write { db in
+        guard let dbPool = dbPool else { return }
+        try dbPool.write { db in
             try db.execute(
                 sql: "UPDATE jobs SET name = ?, notes = ?, updated_at = ? WHERE id = ?",
                 arguments: [name, notes, Date().iso8601String, id]

@@ -36,7 +36,7 @@ struct LivePreviewView: View {
             }
         }
         .padding()
-        .background(Color(nsColor: .textBackgroundColor))
+        .background(Color(.systemBackground))
         .cornerRadius(12)
     }
 }
