@@ -41,12 +41,17 @@ jobs:
           -scheme Voxyz \
           -clonedSourcePackagesDirPath .build/packages
 
+    - name: List schemes
+      run: |
+        cd ios
+        xcodebuild -list -project Voxyz.xcodeproj
+
     - name: Build for generic iOS device
       run: |
         cd ios
         xcodebuild build \
           -project Voxyz.xcodeproj \
-          -target Voxyz \
+          -scheme Voxyz \
           -destination "generic/platform=iOS" \
           -configuration Release \
           -derivedDataPath ../build/DerivedData \
@@ -55,7 +60,8 @@ jobs:
           CODE_SIGNING_ALLOWED=NO \
           ENABLE_BITCODE=NO \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
-          COMPILER_INDEX_STORE_ENABLE=NO
+          COMPILER_INDEX_STORE_ENABLE=NO \
+          ONLY_ACTIVE_ARCH=NO
 
     - name: Create IPA bundle
       run: |

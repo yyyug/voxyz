@@ -53,3 +53,8 @@ targets:
     dependencies:
       - package: GRDB.swift
         product: GRDB
+    scheme:
+      testTargets: []
+      configTargets:
+        Debug: Debug
+        Release: Release
