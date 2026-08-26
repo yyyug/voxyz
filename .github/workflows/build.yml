@@ -46,7 +46,7 @@ jobs:
         cd ios
         xcodebuild build \
           -project Voxyz.xcodeproj \
-          -scheme Voxyz \
+          -target Voxyz \
           -destination "generic/platform=iOS" \
           -configuration Release \
           -derivedDataPath ../build/DerivedData \
@@ -55,8 +55,7 @@ jobs:
           CODE_SIGNING_ALLOWED=NO \
           ENABLE_BITCODE=NO \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
-          COMPILER_INDEX_STORE_ENABLE=NO \
-          | xcpretty
+          COMPILER_INDEX_STORE_ENABLE=NO
 
     - name: Create IPA bundle
       run: |
